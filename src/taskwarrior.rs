@@ -30,7 +30,7 @@ impl Task {
 
         let json = String::from_utf8_lossy(&command);
 
-        let input: Vec<Self> = serde_yaml::from_str(&json).unwrap();
+        let input: Vec<Self> = serde_json::from_str(&json).unwrap();
         input.first().unwrap().clone()
     }
 }

@@ -1,5 +1,7 @@
 
 
+use std::{collections::HashMap, hash::Hash};
+
 use chrono::NaiveDate;
 use cursive::{
     theme::{PaletteColor, Style},
@@ -30,13 +32,28 @@ struct UIData {
     anwers: Vec<Answer>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Eq)]
 pub struct Answer {
     service_id: i64,
     project_id: i64,
     note: String,
     minutes: i64,
     date_at: NaiveDate,
+}
+
+impl PartialEq for Answer {
+    fn eq(&self, other: &Self) -> bool {
+        self.service_id == other.service_id && self.project_id == other.project_id && self.note == other.note && self.date_at == other.date_at
+    }
+}
+
+impl Hash for Answer {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.service_id.hash(state);
+        self.project_id.hash(state);
+        self.note.hash(state);
+        self.date_at.hash(state);
+    }
 }
 
 impl UIData {
@@ -48,7 +65,23 @@ impl UIData {
 impl UI {
     pub fn get_answers(&mut self) -> Vec<Answer> {
         let data: UIData = self.interface.take_user_data().unwrap();
-        data.anwers
+
+        let mut answers = HashMap::new();
+
+        for answer in data.anwers  {
+            let minutes = answer.minutes;
+            let hashentry = answers.entry(answer).or_insert(1);
+            *hashentry += minutes;
+        }
+
+        let mut out = vec![];
+
+        for (mut entry, duration) in answers {
+            entry.minutes = duration;
+            out.push(entry);
+        }
+
+        out
     }
 
     pub fn new(input: TimewInput, mite: Mite) -> Self {
