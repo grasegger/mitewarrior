@@ -2,7 +2,7 @@ use std::process::exit;
 
 mod config;
 mod mite;
-mod taskwarrior;
+mod model;
 mod timew_input;
 mod tw_entry;
 mod ui;
@@ -22,7 +22,7 @@ fn main() {
         ui.boot();
 
         let answers = ui.get_answers();
-        
+
         for answer in answers {
             mite.create_time_entry(answer);
         }

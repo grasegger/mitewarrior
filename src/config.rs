@@ -18,7 +18,8 @@ impl Config {
             .args(args)
             .output()
             .expect("failed to execute process");
-        String::from_utf8_lossy(&output.stdout).to_string()
+        let result = String::from_utf8_lossy(&output.stdout).trim().to_string();
+        result
     }
 
     fn get_config_file_location() -> Option<PathBuf> {
