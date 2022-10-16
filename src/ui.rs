@@ -101,10 +101,15 @@ impl UI {
         let mut name = "".to_string();
         let rep = Regex::new(r"^p.*?:").unwrap();
         let ret = Regex::new(r"^t.*?:").unwrap();
+        let res = Regex::new(r"^s:").unwrap();
         let reth = Regex::new(r"^http").unwrap();
 
         for tag in &entry.tags {
-            if !rep.is_match(&tag) && !ret.is_match(&tag) && !reth.is_match(tag) {
+            if !rep.is_match(&tag)
+                && !ret.is_match(&tag)
+                && !reth.is_match(tag)
+                && !res.is_match(tag)
+            {
                 name = if name == "" {
                     format!("{}", tag)
                 } else {
@@ -160,16 +165,31 @@ impl UI {
         let note: ViewRef<TextView> = c.find_name::<TextView>("current_note").unwrap();
         let note_content = note.get_content();
 
-        let answer = Answer {
+        let mut answer = Answer {
             project_id: selection.id,
             service_id: 0,
             minutes: entry.get_duration(),
             note: note_content.source().clone().to_string(),
             date_at: entry.start.unwrap().date(),
         };
-        data.anwers.push(answer);
 
-        let new_layer = Self::get_service_page(&mut data);
+        let res = Regex::new(r"^s:").unwrap();
+
+        for tag in &entry.tags {
+            if res.is_match(tag) {
+                let id = res.replace(tag, "").to_string();
+
+                answer.service_id = id.trim().parse().unwrap();
+            }
+        }
+
+        let new_layer = if answer.service_id == 0 {
+            Self::get_service_page(&mut data)
+        } else {
+            Self::get_next_page(&mut data)
+        };
+
+        data.anwers.push(answer);
 
         c.set_user_data(data);
         c.pop_layer();
