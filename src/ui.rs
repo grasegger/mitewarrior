@@ -70,8 +70,11 @@ impl UI {
         let mut answers = HashMap::new();
 
         for answer in data.anwers {
-            let minutes = answer.minutes;
-            let hashentry = answers.entry(answer).or_insert(1);
+            let mut minutes = answer.minutes;
+            while minutes % 15 != 0 {
+                minutes += 1;
+            }
+            let hashentry = answers.entry(answer).or_insert(15);
             *hashentry += minutes;
         }
 
