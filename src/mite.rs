@@ -31,7 +31,7 @@ pub struct TimeEntry {
 
 impl Mite {
     fn api_get(&self, url: &str) -> Result<Response, ureq::Error> {
-        ureq::get(&format!("https://{}.mite.yo.lk{}", self.instance, url))
+        ureq::get(&format!("https://{}.mite.de{}", self.instance, url))
             .set("X-MiteApiKey", &self.api_key)
             .set(
                 "User-Agent",
@@ -74,8 +74,8 @@ impl Mite {
     }
 
     pub fn create_time_entry(&self, time_entry: Answer) {
-        _ = ureq::post(&format!(
-            "https://{}.mite.yo.lk/time_entries.json",
+        let _ = ureq::post(&format!(
+            "https://{}.mite.de/time_entries.json",
             self.instance
         ))
         .set("X-MiteApiKey", &self.api_key)
