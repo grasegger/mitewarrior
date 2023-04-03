@@ -24,6 +24,7 @@ fn main() {
         let answers = ui.get_answers();
 
         for answer in answers {
+            println!("{:?}", answer);
             mite.create_time_entry(answer);
         }
     } else {

@@ -71,11 +71,11 @@ impl UI {
 
         for answer in data.anwers {
             let mut minutes = answer.minutes;
-            while minutes % 15 != 0 {
-                minutes += 1;
-            }
-            let hashentry = answers.entry(answer).or_insert(15);
+            let hashentry = answers.entry(answer).or_insert(0);
             *hashentry += minutes;
+            while *hashentry % 10 != 0 {
+                *hashentry += 1;
+            }
         }
 
         let mut out = vec![];
